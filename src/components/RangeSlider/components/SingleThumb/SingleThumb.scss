@@ -2,14 +2,23 @@
 @import '../../RangeSlider';
 
 $stacking-order: (
-  output: 10,
-  input: 20,
+  input: 10,
+  output: 20,
 );
 
-$range-thumb-shadow: (0 0 0 rem(1px) rgba(black, 0.2), shadow(faint));
-$range-thumb-shadow-hover: (0 0 0 rem(1px) rgba(black, 0.4), shadow(faint));
-$range-thumb-shadow-error: 0 0 0 rem(1px) color('red');
-$range-thumb-shadow-focus: 0 0 0 rem(1px) color('indigo');
+$range-thumb-shadow: var(
+  --p-override-none,
+  (0 0 0 rem(1px) rgba(black, 0.2), shadow(faint))
+);
+$range-thumb-shadow-hover: var(
+  --p-override-none,
+  (0 0 0 rem(1px) rgba(black, 0.4), shadow(faint))
+);
+$range-thumb-shadow-error: var(--p-override-none, 0 0 0 rem(1px) color('red'));
+$range-thumb-shadow-focus: var(
+  --p-override-none,
+  0 0 0 rem(1px) color('indigo')
+);
 
 .SingleThumb {
   display: flex;
@@ -70,6 +79,10 @@ $range-thumb-shadow-focus: 0 0 0 rem(1px) color('indigo');
     var(--progress-upper, transparent) var(--Polaris-RangeSlider-progress, 100%),
     var(--progress-upper, transparent) 100%;
 
+  @mixin rangeSliderThumbPosition($size) {
+    margin-top: calc(-1 * (#{$size} - #{$range-track-height}) / 2);
+  }
+
   &::-ms-tooltip {
     display: none;
   }
@@ -93,19 +106,25 @@ $range-thumb-shadow-focus: 0 0 0 rem(1px) color('indigo');
     cursor: -webkit-grab;
     width: $range-thumb-size;
     height: $range-thumb-size;
-    border: border-width() solid color('sky', 'lighter');
+    border: border-width() solid
+      var(--p-action-interactive, color('sky', 'lighter'));
     border-radius: 50%;
-    background: linear-gradient(color('white'), color('sky', 'lighter'));
+    background: linear-gradient(
+      var(--p-action-interactive, color('white')),
+      var(--p-action-interactive, color('sky', 'lighter'))
+    );
     box-shadow: $range-thumb-shadow;
     appearance: none;
-    transition-property: border-color, box-shadow;
+    transition-property: border-color, box-shadow, transform;
     transition-duration: duration();
     transition-timing-function: easing();
 
+    @include rangeSliderThumbPosition($range-thumb-size);
+
     &:hover {
       background: linear-gradient(
-        color('sky', 'lighter'),
-        color('sky', 'light')
+        var(--p-action-interactive, color('sky', 'lighter')),
+        var(--p-action-interactive, color('sky', 'light'))
       );
       box-shadow: $range-thumb-shadow-hover;
     }
@@ -120,6 +139,22 @@ $range-thumb-shadow-focus: 0 0 0 rem(1px) color('indigo');
     margin-top: -($range-thumb-size - $range-track-height) / 2;
   }
 
+  &:active {
+    @include range-thumb-selectors {
+      transform: scale(var(--p-range-slider-thumb-scale, 1));
+    }
+  }
+
+  &:focus {
+    @include range-thumb-selectors {
+      box-shadow: $range-thumb-shadow-focus;
+    }
+
+    @media (-ms-high-contrast: active) {
+      outline: 1px solid ms-high-contrast-color('text');
+    }
+  }
+
   .error & {
     --progress-lower: #{var(--p-action-critical, color('red'))};
 
@@ -128,7 +163,8 @@ $range-thumb-shadow-focus: 0 0 0 rem(1px) color('indigo');
     }
 
     @include range-thumb-selectors {
-      border-color: color('red');
+      border-color: var(--p-action-critical, color('red'));
+      background: var(--p-action-critical, color('white'));
       box-shadow: $range-thumb-shadow-error;
     }
   }
@@ -145,22 +181,8 @@ $range-thumb-shadow-focus: 0 0 0 rem(1px) color('indigo');
 
     @include range-thumb-selectors {
       cursor: not-allowed;
-      border-color: color('sky', 'dark');
-    }
-  }
-
-  &:focus {
-    @include range-thumb-selectors {
-      background: linear-gradient(
-        color('sky', 'lighter'),
-        color('sky', 'light')
-      );
-      border-color: color('indigo');
-      box-shadow: $range-thumb-shadow-focus;
-    }
-
-    @media (-ms-high-contrast: active) {
-      outline: 1px solid ms-high-contrast-color('text');
+      border-color: var(--p-border-secondary-disabled, color('sky', 'dark'));
+      background: var(--p-border-secondary-disabled, color('white'));
     }
   }
 }
@@ -169,28 +191,42 @@ $range-thumb-shadow-focus: 0 0 0 rem(1px) color('indigo');
 /// Output value indicator
 $range-output-size: rem(32px);
 $range-output-translate-x: calc(
-  -50% + var(--Polaris-RangeSlider-output-factor, 0) * #{$range-thumb-size}
+  -50% + var(--Polaris-RangeSlider-output-factor, 0) * #{var(
+      --p-range-slider-thumb-size-active,
+      $range-thumb-size
+    )}
 );
 $range-output-spacing: rem(16px);
 
 .Output {
   position: absolute;
   z-index: z-index('output', $stacking-order);
-  bottom: $range-thumb-size;
+  bottom: var(--p-range-slider-thumb-size-active, $range-thumb-size);
   left: var(--Polaris-RangeSlider-progress, 50%);
   transform: translateX($range-output-translate-x);
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition-property: opacity, visibility;
+  transition-property: opacity, visibility, bottom;
   transition-duration: duration();
   transition-timing-function: easing();
 
   .Input:hover + &,
-  .Input:active + &,
   .Input:focus + & {
+    opacity: var(--p-override-zero, 1);
+    visibility: var(--p-override-none, visible);
+  }
+
+  .Input:active + & {
+    $range-thumb-size-difference: var(
+        --p-range-slider-thumb-size-active,
+        $range-thumb-size
+      ) - var(--p-range-slider-thumb-size-base, $range-thumb-size);
     opacity: 1;
     visibility: visible;
+    bottom: calc(
+      #{var(--p-range-slider-thumb-size-active, $range-thumb-size)} + #{$range-thumb-size-difference}
+    );
   }
 }
 

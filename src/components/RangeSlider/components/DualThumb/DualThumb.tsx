@@ -6,6 +6,7 @@ import {
 } from '@shopify/javascript-utilities/events';
 import isEqual from 'lodash/isEqual';
 import {classNames} from '../../../../utilities/css';
+import {FeaturesContext} from '../../../../utilities/features';
 import {CSS_VAR_PREFIX} from '../../utilities';
 import {RangeSliderProps, DualValue} from '../../types';
 import {Labelled, labelID} from '../../../Labelled';
@@ -19,6 +20,7 @@ interface State {
   trackWidth: number;
   trackLeft: number;
   prevValue?: DualValue;
+  globalTheming: boolean;
 }
 
 export interface DualThumbProps extends RangeSliderProps {
@@ -38,9 +40,9 @@ enum Control {
   Upper,
 }
 
-const THUMB_SIZE = 24;
-
 export class DualThumb extends React.Component<DualThumbProps, State> {
+  static contextType = FeaturesContext;
+
   static getDerivedStateFromProps(props: DualThumbProps, state: State) {
     const {min, step, max, value, onChange, id} = props;
     const {prevValue} = state;
@@ -61,6 +63,8 @@ export class DualThumb extends React.Component<DualThumbProps, State> {
     };
   }
 
+  context!: React.ContextType<typeof FeaturesContext>;
+
   state: State = {
     value: sanitizeValue(
       this.props.value,
@@ -70,6 +74,7 @@ export class DualThumb extends React.Component<DualThumbProps, State> {
     ),
     trackWidth: 0,
     trackLeft: 0,
+    globalTheming: false,
   };
 
   private track = React.createRef<HTMLDivElement>();
@@ -80,9 +85,14 @@ export class DualThumb extends React.Component<DualThumbProps, State> {
   private setTrackPosition = debounce(
     () => {
       if (this.track.current) {
+        const newDesignLanguage =
+          this.context && this.context.newDesignLanguage;
+        const thumbSize = newDesignLanguage ? 16 : 24;
+
         const {width, left} = this.track.current.getBoundingClientRect();
-        const adjustedTrackWidth = width - THUMB_SIZE;
-        const adjustedTrackLeft = left + THUMB_SIZE / 2;
+        const adjustedTrackWidth = width - thumbSize;
+        const adjustedTrackLeft = left + thumbSize / 2;
+
         this.setState({
           trackWidth: adjustedTrackWidth,
           trackLeft: adjustedTrackLeft,
@@ -103,6 +113,19 @@ export class DualThumb extends React.Component<DualThumbProps, State> {
         this.handleTouchStartTrack,
         {passive: false},
       );
+    }
+  }
+
+  componentDidUpdate() {
+    const {globalTheming} = this.state;
+    const newDesignLanguage = this.context
+      ? this.context.newDesignLanguage
+      : false;
+
+    if (newDesignLanguage !== globalTheming) {
+      // eslint-disable-next-line react/no-did-update-set-state
+      this.setState({globalTheming: newDesignLanguage});
+      this.setTrackPosition();
     }
   }
 

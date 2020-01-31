@@ -45,10 +45,11 @@ $control-vertical-adjustment: rem(2px);
   box-sizing: border-box;
   display: flex;
   flex-shrink: 0;
-  width: $control-size;
-  height: $control-size;
-  margin-top: $control-vertical-adjustment;
+  width: var(--p-choice-size, $control-size);
+  height: var(--p-choice-size, $control-size);
+  margin-top: var(--p-override-none, $control-vertical-adjustment);
   margin-right: spacing(tight);
+  margin-left: calc(-1 * var(--p-choice-margin, 0));
 }
 
 .focused {
@@ -115,4 +116,54 @@ $control-vertical-adjustment: rem(2px);
 .Media {
   @include recolor-icon(color('ink', 'light'), color('white'));
   padding: 0 spacing(tight);
+}
+
+.globalTheming {
+  &.Option {
+    &:hover,
+    &:focus {
+      background: var(--p-surface-hovered);
+    }
+  }
+
+  .SingleSelectOption {
+    @include focus-ring;
+    // stylelint-disable-next-line selector-max-specificity,
+    &.focused:not(:active):not(.select) {
+      @include focus-ring($style: 'focused');
+    }
+  }
+
+  .focused {
+    box-shadow: none;
+    background: var(--p-surface-hovered);
+    // stylelint-disable-next-line selector-max-specificity
+    &:hover {
+      box-shadow: none;
+      background: var(--p-surface-hovered);
+    }
+  }
+
+  .disabled {
+    color: var(--p-text-disabled);
+    background: var(--p-action-secondary-disabled);
+  }
+
+  .select {
+    background: var(--p-surface-hovered);
+
+    &.focused {
+      box-shadow: none;
+      background: var(--p-surface-hovered);
+      // stylelint-disable-next-line selector-max-specificity, selector-max-class
+      &:hover {
+        box-shadow: none;
+        background-image: none;
+      }
+    }
+  }
+
+  .active {
+    background: var(--p-surface-hovered);
+  }
 }

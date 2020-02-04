@@ -18,7 +18,7 @@ import {
   StickyManagerContext,
 } from '../../utilities/sticky-manager';
 import {LinkContext, LinkLikeComponent} from '../../utilities/link';
-import {Features, FeaturesContext} from '../../utilities/features';
+import {FeaturesConfig, FeaturesContext} from '../../utilities/features';
 import {
   UniqueIdFactory,
   UniqueIdFactoryContext,
@@ -39,7 +39,7 @@ export interface AppProviderProps extends AppBridgeOptions {
   /** Custom logos and colors provided to select components */
   theme?: ThemeConfig;
   /** For toggling features */
-  features?: Features;
+  features?: FeaturesConfig;
   /** Inner content of the application */
   children?: React.ReactNode;
 }
@@ -100,10 +100,12 @@ export class AppProvider extends React.Component<AppProviderProps, State> {
 
   render() {
     const {theme = {}, features = {}, children} = this.props;
+    const {newDesignLanguage = false, ...restOfFeatures} = features;
+
     const {intl, appBridge, link} = this.state;
 
     return (
-      <FeaturesContext.Provider value={features}>
+      <FeaturesContext.Provider value={{newDesignLanguage, ...restOfFeatures}}>
         <I18nContext.Provider value={intl}>
           <ScrollLockManagerContext.Provider value={this.scrollLockManager}>
             <StickyManagerContext.Provider value={this.stickyManager}>

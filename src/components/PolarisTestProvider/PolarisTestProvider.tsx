@@ -20,7 +20,7 @@ import {
 import {AppBridgeContext, AppBridgeOptions} from '../../utilities/app-bridge';
 import {I18n, I18nContext} from '../../utilities/i18n';
 import {LinkContext, LinkLikeComponent} from '../../utilities/link';
-import {Features, FeaturesContext} from '../../utilities/features';
+import {FeaturesConfig, FeaturesContext} from '../../utilities/features';
 import {
   UniqueIdFactory,
   UniqueIdFactoryContext,
@@ -44,7 +44,7 @@ export interface WithPolarisTestProviderOptions {
   link?: LinkLikeComponent;
   theme?: ThemeConfig;
   mediaQuery?: Partial<MediaQueryContextType>;
-  features?: Features;
+  features?: FeaturesConfig;
   // Contexts provided by Frame
   frame?: Partial<FrameContextType>;
 }
@@ -71,7 +71,7 @@ export function PolarisTestProvider({
   frame,
 }: PolarisTestProviderProps) {
   const Wrapper = strict ? React.StrictMode : React.Fragment;
-
+  const {newDesignLanguage = false, ...restOfFeatures} = features;
   const intl = new I18n(i18n || {});
 
   const scrollLockManager = new ScrollLockManager();
@@ -84,7 +84,6 @@ export function PolarisTestProvider({
   // I'm not that worried about it
   const appBridgeApp = appBridge as React.ContextType<typeof AppBridgeContext>;
 
-  const {newDesignLanguage = false} = features;
   const customProperties = newDesignLanguage
     ? buildCustomProperties({...theme, colorScheme: 'light'}, newDesignLanguage)
     : undefined;
@@ -96,7 +95,7 @@ export function PolarisTestProvider({
 
   return (
     <Wrapper>
-      <FeaturesContext.Provider value={features}>
+      <FeaturesContext.Provider value={{newDesignLanguage, ...restOfFeatures}}>
         <I18nContext.Provider value={intl}>
           <ScrollLockManagerContext.Provider value={scrollLockManager}>
             <StickyManagerContext.Provider value={stickyManager}>

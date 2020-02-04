@@ -1,4 +1,5 @@
 import React from 'react';
+import {createMount} from 'test-utilities';
 // eslint-disable-next-line no-restricted-imports
 import {
   mountWithAppProvider,
@@ -7,6 +8,7 @@ import {
 } from 'test-utilities/legacy';
 import {Key} from 'types';
 import {DualThumb, DualThumbProps} from '../DualThumb';
+import {FeaturesContext} from '../../../../../utilities/features';
 
 describe('<DualThumb />', () => {
   const mockProps: DualThumbProps = {
@@ -20,6 +22,48 @@ describe('<DualThumb />', () => {
     onChange: noop,
     label: 'Dual thumb range slider',
   };
+
+  const dualThumbWithDesignLanguage = mountWithAppProvider(
+    <FeaturesContext.Provider value={{newDesignLanguage: true}}>
+      <DualThumb {...mockProps} />
+    </FeaturesContext.Provider>,
+  );
+
+  it('sets globalTheming to false if newDesignLanguage is false', () => {
+    const dualThumb = mountWithAppProvider(
+      <FeaturesContext.Provider value={{newDesignLanguage: false}}>
+        <DualThumb {...mockProps} />
+      </FeaturesContext.Provider>,
+    );
+
+    expect(dualThumb.state().globalTheming).toBe(false);
+  });
+
+  it('sets globalTheming to true if newDesignLanguage is true', () => {
+    expect(dualThumbWithDesignLanguage.state().globalTheming).toBe(true);
+  });
+
+  it('has a different track width and left value when the design system is used', () => {
+    const dualThumbWithoutDesignLanguage = mountWithAppProvider(
+      <DualThumb {...mockProps} />,
+    );
+
+    const stateWithDesignLanguage = dualThumbWithDesignLanguage.state();
+    const stateWithoutDesignLanguage = dualThumbWithoutDesignLanguage.state();
+
+    expect(stateWithDesignLanguage.trackWidth).not.toStrictEqual(
+      stateWithoutDesignLanguage.trackWidth,
+    );
+    expect(stateWithDesignLanguage.trackLeft).not.toStrictEqual(
+      stateWithoutDesignLanguage.trackLeft,
+    );
+  });
+
+  it('does not set globalTheming without the features context', () => {
+    const dualThumb = mountWithAppProvider(<DualThumb {...mockProps} />);
+
+    expect(dualThumb.state().globalTheming).toBeUndefined();
+  });
 
   describe('id', () => {
     it('is used on the lower thumb', () => {

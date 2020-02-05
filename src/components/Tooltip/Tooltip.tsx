@@ -97,7 +97,10 @@ export function Tooltip({
       return;
     }
 
-    setActivatorNode(node.firstElementChild as HTMLElement);
+    if (node.firstElementChild instanceof HTMLElement) {
+      setActivatorNode(node.firstElementChild);
+    }
+
     activatorContainerRef.current = node;
   }
 

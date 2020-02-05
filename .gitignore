@@ -15,3 +15,4 @@ node_modules
 *.scss.d.ts
 /src/styles/polaris-tokens
 /scripts/analyze-custom-properties/dist
+config.bat

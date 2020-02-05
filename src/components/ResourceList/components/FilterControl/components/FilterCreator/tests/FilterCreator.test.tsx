@@ -66,7 +66,7 @@ describe('<FilterCreator />', () => {
     disabled: false,
   };
 
-  it('focuses the button after adding a filter', () => {
+  it('focuses the activator after adding a filter', () => {
     const filterCreator = mountWithAppProvider(
       <FilterCreator {...mockDefaultProps} onAddFilter={() => {}} />,
     );
@@ -87,6 +87,29 @@ describe('<FilterCreator />', () => {
     );
 
     expect(activator.getDOMNode()).toBe(document.activeElement);
+  });
+
+  it('does not focus the activator after adding a filter if focus was never originally received by the by activator', () => {
+    const filterCreator = mountWithAppProvider(
+      <FilterCreator {...mockDefaultProps} onAddFilter={() => {}} />,
+    );
+    trigger(
+      filterCreator.find(Select),
+      'onChange',
+      mockDefaultProps.filters[0].key,
+    );
+    const activator = findByTestID(
+      filterCreator,
+      'FilterCreator-FilterActivator',
+    );
+    trigger(activator, 'onFocus');
+    trigger(filterCreator.find(FilterValueSelector), 'onChange', 'x');
+    trigger(
+      findByTestID(filterCreator, 'FilterCreator-AddFilterButton'),
+      'onClick',
+    );
+
+    expect(activator.getDOMNode()).not.toBe(document.activeElement);
   });
 
   it('renders just a button by default', () => {

@@ -388,7 +388,10 @@ $stacking-order: (
     }
   }
 
+  // This is a violation of our component model, but necessary
+  // due to Connected.scss overriding these values.
   // stylelint-disable declaration-no-important
+
   .BackdropWithConnectedLeft {
     &::after {
       border-top-left-radius: 0 !important;
@@ -432,10 +435,6 @@ $stacking-order: (
       margin-top: none;
       border-top: none;
     }
-
-    // This is a violation of our component model, but necessary
-    // due to Connected.scss overriding these values.
-    // stylelint-disable declaration-no-important
 
     &:first-child {
       border-top-right-radius: var(

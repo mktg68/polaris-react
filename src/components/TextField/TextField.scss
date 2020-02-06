@@ -388,6 +388,21 @@ $stacking-order: (
     }
   }
 
+  // stylelint-disable declaration-no-important
+  .BackdropWithConnectedLeft {
+    &::after {
+      border-top-left-radius: 0 !important;
+      border-bottom-left-radius: 0 !important;
+    }
+  }
+
+  .BackdropWithConnectedRight {
+    &::after {
+      border-top-right-radius: 0 !important;
+      border-bottom-right-radius: 0 !important;
+    }
+  }
+
   .Spinner {
     --p-text-field-spinner-offset-large: calc(
       var(--p-text-field-spinner-offset) + #{border-width()}

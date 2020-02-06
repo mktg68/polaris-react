@@ -410,6 +410,12 @@ export function TextField({
     'aria-multiline': normalizeAriaMultiline(multiline),
   });
 
+  const textFieldStyles = classNames(
+    styles.Backdrop,
+    connectedLeft && styles.BackdropWithConnectedLeft,
+    connectedRight && styles.BackdropWithConnectedRight,
+  );
+
   return (
     <Labelled
       label={label}
@@ -432,7 +438,7 @@ export function TextField({
           {characterCountMarkup}
           {clearButtonMarkup}
           {spinnerMarkup}
-          <div className={styles.Backdrop} />
+          <div className={textFieldStyles} />
           {resizer}
         </div>
       </Connected>

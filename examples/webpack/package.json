@@ -5,9 +5,9 @@
   "description": "A Polaris example application using webpack",
   "license": "MIT",
   "scripts": {
-    "start": "webpack-dev-server",
+    "start": "node init && webpack-dev-server",
     "prebuild": "rimraf ./build",
-    "build": "webpack"
+    "build": "node init && webpack"
   },
   "dependencies": {
     "@shopify/polaris": "^4.0.0",

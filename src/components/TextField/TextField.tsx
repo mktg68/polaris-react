@@ -412,8 +412,8 @@ export function TextField({
 
   const textFieldStyles = classNames(
     styles.Backdrop,
-    connectedLeft && styles.BackdropWithConnectedLeft,
-    connectedRight && styles.BackdropWithConnectedRight,
+    newDesignLanguage && connectedLeft && styles.BackdropWithConnectedLeft,
+    newDesignLanguage && connectedRight && styles.BackdropWithConnectedRight,
   );
 
   return (

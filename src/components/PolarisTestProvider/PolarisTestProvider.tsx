@@ -59,19 +59,20 @@ const defaultMediaQuery: MediaQueryContextType = {
   isNavigationCollapsed: false,
 };
 
-export function PolarisTestProvider({
-  strict,
-  children,
-  i18n,
-  appBridge,
-  link,
-  theme = {},
-  mediaQuery,
-  features = {},
-  frame,
-}: PolarisTestProviderProps) {
+export function PolarisTestProvider(props: PolarisTestProviderProps) {
+  const {
+    strict,
+    children,
+    i18n,
+    appBridge,
+    link,
+    theme = {},
+    mediaQuery,
+    frame,
+  } = props;
+
   const Wrapper = strict ? React.StrictMode : React.Fragment;
-  const {newDesignLanguage = false, ...restOfFeatures} = features;
+  const features = {newDesignLanguage: false, ...props.features};
   const intl = new I18n(i18n || {});
 
   const scrollLockManager = new ScrollLockManager();
@@ -84,8 +85,11 @@ export function PolarisTestProvider({
   // I'm not that worried about it
   const appBridgeApp = appBridge as React.ContextType<typeof AppBridgeContext>;
 
-  const customProperties = newDesignLanguage
-    ? buildCustomProperties({...theme, colorScheme: 'light'}, newDesignLanguage)
+  const customProperties = features.newDesignLanguage
+    ? buildCustomProperties(
+        {...theme, colorScheme: 'light'},
+        features.newDesignLanguage,
+      )
     : undefined;
   const mergedTheme = buildThemeContext(theme, customProperties);
 
@@ -95,7 +99,7 @@ export function PolarisTestProvider({
 
   return (
     <Wrapper>
-      <FeaturesContext.Provider value={{newDesignLanguage, ...restOfFeatures}}>
+      <FeaturesContext.Provider value={features}>
         <I18nContext.Provider value={intl}>
           <ScrollLockManagerContext.Provider value={scrollLockManager}>
             <StickyManagerContext.Provider value={stickyManager}>

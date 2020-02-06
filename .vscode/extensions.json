@@ -1,12 +1,7 @@
 {
-  "recommendations": [
-    "christian-kohler.npm-intellisense",
-    "christian-kohler.path-intellisense",
-    "codezombiech.gitignore",
-    "dbaeumer.vscode-eslint",
-    "EditorConfig.editorconfig",
-    "esbenp.prettier-vscode",
-    "stylelint.vscode-stylelint",
-    "mrmlnc.vscode-scss"
-  ]
+    "recommendations": [
+        "myml.vscode-markdown-plantuml-preview",
+        "esbenp.prettier-vscode",
+        "jebbs.plantuml"
+    ]
 }

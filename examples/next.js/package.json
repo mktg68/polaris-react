@@ -5,8 +5,8 @@
   "description": "A Polaris example application using next.js",
   "license": "MIT",
   "scripts": {
-    "start": "next",
-    "build": "next build",
+    "start": "node init && next",
+    "build": "node init && next build",
     "server": "next start"
   },
   "dependencies": {
